@@ -40,6 +40,26 @@ final class DatabaseToolsCommandTest extends TestCase
         ])->assertExitCode(1);
     }
 
+    public function test_clean_is_skipped_when_the_user_declines_confirmation(): void
+    {
+        Schema::create('keep_widgets', function ($t): void {
+            $t->id();
+            $t->string('name');
+        });
+        DB::table('keep_widgets')->insert([['name' => 'a'], ['name' => 'b']]);
+
+        $this->artisan('laranail::database-tools.db', [
+            'action' => 'clean',
+            '--tables' => 'keep_widgets',
+        ])
+            ->expectsConfirmation('About to TRUNCATE keep_widgets. Continue?', 'no')
+            ->assertExitCode(0);
+
+        // Declined → the action is skipped and the data is preserved (rather than
+        // silently truncated).
+        self::assertSame(2, DB::table('keep_widgets')->count());
+    }
+
     public function test_clean_truncates_named_tables(): void
     {
         Schema::create('clean_widgets', function ($t): void {

@@ -184,9 +184,16 @@ final class DatabaseToolsCommand extends Command
 
     private function confirmDestructive(string $what): bool
     {
-        if ($this->option('force') || ! $this->input->isInteractive()) {
-            // Non-interactive: proceed only when explicitly forced.
-            return (bool) $this->option('force');
+        if ($this->option('force')) {
+            return true;
+        }
+
+        // Non-interactive (pipe / CI): never silently destroy data — skip with a
+        // clear message instead, so the caller knows --force is required.
+        if (! $this->input->isInteractive()) {
+            $this->warn("Skipped: {$what} — re-run with --force to proceed in a non-interactive shell.");
+
+            return false;
         }
 
         return $this->confirm("About to {$what}. Continue?", false);

@@ -8,11 +8,13 @@
 > Independent, framework-agnostic database utilities for Laravel.
 
 Model traits (UUID/NanoID/ULID keys, JSON accessors, slugs, immutability,
-threaded records, quiet saving), money & datetime casts, schema macros
-(`auditColumns()`, `softDeletesWithUndo()`, `configuredMorphs()`), an audit
-observer, soft-delete restore history, backup/restore, connection & schema
-inspection, a cursor-pagination DTO, and database/maintenance services —
-designed to be useful in any Laravel app. This package is genuinely
+threaded records, quiet saving, **soft-archiving**), money & datetime casts,
+schema macros (`auditColumns()`, `softDeletesWithUndo()`, `configuredMorphs()`,
+**field-group macros**), an audit observer, soft-delete restore history,
+backup/restore, a **database CLI command** (`laranail::database-tools.db`:
+import / export / restore / clean), connection & schema inspection, **cursor and
+offset pagination**, a **session read-model**, and database/maintenance services
+— designed to be useful in any Laravel app. This package is genuinely
 **independent**: it depends only on `illuminate/*` plus a few small
 utility libraries (`ramsey/uuid`, `symfony/uid`,
 `spatie/laravel-sluggable`, and `brick/money` for the `CastMoney`

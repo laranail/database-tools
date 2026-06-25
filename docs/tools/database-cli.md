@@ -41,9 +41,10 @@ php artisan laranail::database-tools.db clean   --tables=cache,sessions --force
 - `clean` truncates through the connection's query grammar — table names are
   validated against the schema via [`DatabaseTableVerifier`](table-verification.md)
   first, and never interpolated into raw SQL.
-- Dumps/restores delegate to the per-driver `BackupManager`, which passes
-  database credentials securely (e.g. a `--defaults-extra-file` for MySQL rather
-  than the command line).
+- Dumps/restores delegate to the per-driver `BackupManager`, which passes the
+  database password through an **environment variable** (`MYSQL_PWD` for MySQL/
+  MariaDB, `PGPASSWORD` for PostgreSQL) rather than on the command line, so it
+  never appears in the process listing.
 
 The command uses the laranail `::` namespace separator via a local
 `SupportsNamespacedNames` trait, so this package keeps its zero-dependency
