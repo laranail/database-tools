@@ -5,6 +5,34 @@ All notable changes to `laranail/database-tools` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+Database-oriented features relocated here from `laranail/toolkit` (which now
+defers all DB/UUID concerns to this package):
+
+- **`Console\DatabaseToolsCommand`** — the `laranail::database-tools.db` Artisan
+  command: `import` / `export` / `restore` / `clean`. Destructive actions confirm
+  first (and require `--force` in non-interactive runs); `clean` truncates through
+  the query grammar after verifying tables exist; dumps/restores delegate to the
+  per-driver `BackupManager`. Adds a local `Console\Concerns\SupportsNamespacedNames`
+  trait so the `::` command name works without a `laranail/console` dependency.
+- **`Concerns\HasArchiver`** + **`Schema\Scopes\ArchiveScope`** — soft-archive on
+  an `archived_at` column (archive / unArchive / `onlyArchived()` / `withArchived()`),
+  coexisting with Laravel's native soft deletes.
+- **`Models\DatabaseSession`** — read model over the `sessions` table
+  (`SESSION_DRIVER=database`) with safe payload decoding and a configurable user
+  relation.
+- **`Pagination\Pagination`** — offset (page-number) `LengthAwarePaginator`
+  helper for arrays and query builders, complementing the cursor `CursorPage`.
+- **`Schema\FieldGroupMacros`** — reusable `Blueprint` column-group macros
+  (`addCommonFields`, `addUserFields`, `addSlugField`, `addPublishingFields`,
+  `addMetaFields`/`addSeoFields`, `addLocationFields`, `addImageFields`,
+  `addPriceFields`, `addActivationFields`, `addExpiryFields`, `addStatusField`,
+  `addSortingField`, `addUuidPrimaryKey`, `addNullableMorphs`, and the conditional
+  `dropForeignIfExists` / `dropColumnIfExists`).
+
 ## [0.1.0] - 2026-06-19
 
 Initial release — independent Laravel database utilities.
