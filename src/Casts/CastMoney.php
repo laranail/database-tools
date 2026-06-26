@@ -55,7 +55,7 @@ class CastMoney implements CastsAttributes, SerializesCastableAttributes
         }
 
         if (is_int($value) || is_float($value) || (is_string($value) && is_numeric($value))) {
-            return Money::of((string) $value, $this->currency(), roundingMode: RoundingMode::HALF_UP)
+            return Money::of((string) $value, $this->currency(), roundingMode: RoundingMode::HalfUp)
                 ->getMinorAmount()
                 ->toInt();
         }
