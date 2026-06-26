@@ -53,4 +53,4 @@ jobs:
           fi
 
       - name: Run Pest
-        run: vendor/bin/pest --colors=always
+        run: vendor/bin/pest --colors=always --no-coverage

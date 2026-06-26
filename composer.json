@@ -81,8 +81,8 @@
     },
     "scripts": {
         "setup": "bash .scripts/init.sh",
-        "test": "vendor/bin/pest --colors=always",
-        "test-coverage": "@test --coverage",
+        "test": "vendor/bin/pest --colors=always --no-coverage",
+        "test-coverage": "vendor/bin/pest --colors=always --coverage",
         "test-dirty": "@test --dirty --compact",
         "lint": ["@pint", "@phpstan", "@rector"],
         "pint": "vendor/bin/pint --test",
