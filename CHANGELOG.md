@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-06-25
+
 ### Changed
 
 - **Dependency refresh to latest.** `brick/money` → `^0.13` (and the cast updated
@@ -15,6 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `symfony/uid` widened to `^7.0 || ^8.0` (symfony/uid 8 is used on PHP 8.4+; 7.x
   is kept for the PHP 8.3 floor). CI Action versions bumped (checkout v7, cache
   v5, action-gh-release v3). No public API change.
+
+### Fixed
+
+- Run Pest without coverage on driverless runs — PHPUnit 12 (via Pest 4) hard-errors
+  when coverage reports are configured but no driver is present, where PHPUnit 11
+  only warned. The `test` script and CI `Run Pest` step now pass `--no-coverage`
+  (a coverage driver is only needed for `composer test-coverage`).
 
 ## [0.2.0] - 2026-06-25
 
