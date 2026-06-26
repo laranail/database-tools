@@ -53,6 +53,10 @@ final class ConfiguredMorphsMacro
 
     /**
      * Resolve the configured key type (BIGINT|UUID|ULID).
+     *
+     * Precedence: `using_uuids_for_id` (→ UUID) wins over `using_ulids_for_id`
+     * (→ ULID), which win over the `id_type` string (default `BIGINT`). If both
+     * boolean flags are true, UUID is used.
      */
     public static function idType(): string
     {

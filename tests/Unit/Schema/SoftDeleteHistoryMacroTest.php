@@ -91,4 +91,21 @@ final class SoftDeleteHistoryMacroTest extends TestCase
         self::assertTrue($columns['actor_id']['nullable']);
         self::assertTrue($columns['reason']['nullable']);
     }
+
+    public function test_actor_id_tracks_configured_id_type(): void
+    {
+        config()->set('database-tools.using_uuids_for_id', false);
+        config()->set('database-tools.using_ulids_for_id', false);
+        config()->set('database-tools.id_type', 'BIGINT');
+        Schema::create('sdh_actor_int', function (Blueprint $t): void {
+            $t->softDeleteHistory();
+        });
+        self::assertSame('integer', Schema::getColumnType('sdh_actor_int', 'actor_id'));
+
+        config()->set('database-tools.using_uuids_for_id', true);
+        Schema::create('sdh_actor_uuid', function (Blueprint $t): void {
+            $t->softDeleteHistory();
+        });
+        self::assertNotSame('integer', Schema::getColumnType('sdh_actor_uuid', 'actor_id'));
+    }
 }

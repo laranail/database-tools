@@ -33,6 +33,37 @@ final class SchemaMacrosTest extends TestCase
         self::assertFalse(Schema::hasColumn('audit_test_no_delete', 'deleted_by'));
     }
 
+    public function test_audit_columns_default_tracks_configured_id_type(): void
+    {
+        config()->set('database-tools.using_uuids_for_id', false);
+        config()->set('database-tools.using_ulids_for_id', false);
+        config()->set('database-tools.id_type', 'BIGINT');
+        Schema::create('audit_int', function ($t): void {
+            $t->id();
+            $t->auditColumns();
+        });
+        self::assertSame('integer', Schema::getColumnType('audit_int', 'created_by'));
+
+        config()->set('database-tools.using_uuids_for_id', true);
+        Schema::create('audit_uuid', function ($t): void {
+            $t->id();
+            $t->auditColumns();
+        });
+        self::assertNotSame('integer', Schema::getColumnType('audit_uuid', 'created_by'));
+    }
+
+    public function test_audit_columns_explicit_foreign_key_overrides_config(): void
+    {
+        config()->set('database-tools.using_uuids_for_id', true);
+
+        Schema::create('audit_override', function ($t): void {
+            $t->id();
+            $t->auditColumns(foreignKey: 'foreignId'); // force BIGINT despite UUID config
+        });
+
+        self::assertSame('integer', Schema::getColumnType('audit_override', 'created_by'));
+    }
+
     public function test_soft_deletes_with_undo_adds_two_columns(): void
     {
         Schema::create('sdwu_test', function ($t): void {

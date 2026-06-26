@@ -10,9 +10,9 @@ return [
     |--------------------------------------------------------------------------
     |
     | Drives HasUuidsOrIntegerIds, the BlueprintMacros id()/foreignId()/morphs()
-    | overrides, and the configuredMorphs() macro. One of: BIGINT, UUID, ULID.
-    | The boolean flags are kept for convenience and take precedence over
-    | "id_type" when true.
+    | overrides, and the configured-morphs, field-group and audit macros. One of:
+    | BIGINT, UUID, ULID. The boolean flags take precedence over "id_type" when
+    | true; "using_uuids_for_id" (UUID) wins over "using_ulids_for_id" (ULID).
     |
     */
 

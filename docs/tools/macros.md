@@ -150,7 +150,8 @@ Schema::create('posts', function (Blueprint $t) {
 | Macro | Columns |
 |--------|---------|
 | `addCommonFields()` | `timestamps()` + `softDeletes()` |
-| `addUserFields()` | `created_by`, `updated_by`, `deleted_by` (nullable) |
+| `addUserFields()` | `created_by`, `updated_by`, `deleted_by` (nullable, **id-type-aware**) |
+| `addAcceptanceFields(string $name)` | `is_{name}`, `{name}_at`, `{name}_by` (**id-type-aware**), `{name}_remarks` — approval workflow |
 | `addPublishingFields()` | `is_published`, `published_at` |
 | `addStatusField(string $default = 'active')` | `status` (indexed) |
 | `addSortingField(int $default = 0)` | `sort_order` (indexed) |
@@ -161,10 +162,27 @@ Schema::create('posts', function (Blueprint $t) {
 | `addPriceFields()` | `price`, `sale_price`, `currency` |
 | `addActivationFields()` | `is_active`, `activated_at`, `deactivated_at` |
 | `addExpiryFields()` | `starts_at`, `expires_at` |
-| `addUuidPrimaryKey(string $column = 'id')` | UUID primary key |
-| `addNullableMorphs(string $name, ?string $indexName = null)` | nullable `{name}_type` / `{name}_id` + index |
+| `addUuidPrimaryKey(string $column = 'id')` | UUID primary key (explicit) |
+| `addNullableMorphs(string $name, ?string $indexName = null)` | nullable `{name}_type` / `{name}_id` (**id-type-aware**) + index |
 | `dropForeignIfExists(string $index)` | drop a foreign key only if the column exists |
 | `dropColumnIfExists(string\|array $columns)` | drop column(s) only if present |
+
+**Id-type-aware** columns (`addUserFields`, `addAcceptanceFields`, `addNullableMorphs`,
+plus `auditColumns()` by default) follow the configured key type
+(`database-tools.using_uuids_for_id` / `using_ulids_for_id` / `id_type`) — so a
+UUID/ULID-keyed app gets `uuid`/`ulid` foreign-key columns, not `BIGINT`.
+
+### Coming from `cleaniquecoders/blueprint-macro`?
+
+That third-party pack's single-column shorthands are native Laravel one-liners —
+use the natives directly: `name()`/`label()` → `string()`; `code()`/`reference()`
+→ `string()->unique()`; `description()`/`remarks()` → `text()->nullable()`;
+`money()` → `decimal(_, 8, 2)`; `amount()`/`smallAmount()` → `(unsigned)bigInteger`/
+`integer`; `slug()`/`hashslug()` → `string()->unique()`; `uuid()` → `uuid()`;
+`ordering()` → `integer()->default(0)`; `percent()` → `decimal(_, 5, 2)`;
+`addForeign()`/`belongsTo()` → `foreignId()->constrained()`. Its multi-column
+patterns are covered above (`standardTime()` → `addCommonFields()`; `user()` →
+`addUserFields()`; `addAcceptance()` → `addAcceptanceFields()`).
 
 ---
 [← Docs index](../../README.md#documentation)

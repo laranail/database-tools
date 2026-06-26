@@ -54,7 +54,13 @@ final class SoftDeleteHistoryMacro
             };
 
             $this->string('action');
-            $this->string('actor_id')->nullable()->index();
+            // Id-type-aware actor reference (the acting user's key), matching the
+            // configured key type like the `record_*` columns above.
+            match (ConfiguredMorphsMacro::idType()) {
+                'UUID' => $this->foreignUuid('actor_id')->nullable()->index(),
+                'ULID' => $this->foreignUlid('actor_id')->nullable()->index(),
+                default => $this->foreignId('actor_id')->nullable()->index(),
+            };
             $this->text('reason')->nullable();
             $this->timestamp('happened_at')->index();
             $this->timestamps();

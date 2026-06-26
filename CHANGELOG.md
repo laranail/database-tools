@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Schema macros now honour the configured key type for user/foreign/morph
+  columns.** `FieldGroupMacros::addUserFields()` and `addNullableMorphs()`,
+  `SoftDeleteHistoryMacro`'s `actor_id`, and the **default** `auditColumns()`
+  (no `foreignKey` arg) previously hardcoded `BIGINT`/`string`, so a UUID/ULID-keyed
+  app could not store its string identifiers (broken on MySQL/Postgres; masked on
+  SQLite). They now switch on `ConfiguredMorphsMacro::idType()` like the rest of
+  the package. BIGINT (the default) is unchanged. Added column-type tests across
+  BIGINT/UUID/ULID that the previous existence-only tests missed.
+
+### Added
+
+- **`FieldGroupMacros::addAcceptanceFields(string $name)`** — approval-workflow
+  columns `is_{name}` / `{name}_at` / `{name}_by` (id-type-aware) / `{name}_remarks`.
+
 ## [0.2.1] - 2026-06-25
 
 ### Changed

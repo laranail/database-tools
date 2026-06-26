@@ -10,8 +10,12 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Reusable column-group macros on the schema Blueprint — convenience helpers for
  * the column patterns that recur across migrations (timestamps + soft deletes,
- * audit user ids, publishing/SEO/location/price/activation/expiry fields, slugs,
- * UUID primary keys, nullable morphs) plus safe conditional drops.
+ * audit user ids, publishing/SEO/location/price/activation/expiry/acceptance
+ * fields, slugs, UUID primary keys, nullable morphs) plus safe conditional drops.
+ *
+ * User-id and polymorphic columns are **id-type-aware**: `addUserFields()`,
+ * `addAcceptanceFields()` and `addNullableMorphs()` honour the configured key type
+ * ({@see ConfiguredMorphsMacro::idType()} — BIGINT / UUID / ULID).
  *
  * Registered in {@see DatabaseToolsServiceProvider::boot()}.
  *
@@ -37,9 +41,17 @@ final class FieldGroupMacros
 
         Blueprint::macro('addUserFields', function (): void {
             /** @var Blueprint $this */
-            $this->unsignedBigInteger('created_by')->nullable();
-            $this->unsignedBigInteger('updated_by')->nullable();
-            $this->unsignedBigInteger('deleted_by')->nullable();
+            $columns = ['created_by', 'updated_by', 'deleted_by'];
+
+            // Id-type-aware user foreign keys: a UUID/ULID-keyed user model stores
+            // a string identifier, which will not fit an unsignedBigInteger.
+            foreach ($columns as $column) {
+                match (ConfiguredMorphsMacro::idType()) {
+                    'UUID' => $this->foreignUuid($column)->nullable(),
+                    'ULID' => $this->foreignUlid($column)->nullable(),
+                    default => $this->foreignId($column)->nullable(),
+                };
+            }
         });
 
         Blueprint::macro('addPublishingFields', function (): void {
@@ -142,9 +154,26 @@ final class FieldGroupMacros
 
         Blueprint::macro('addNullableMorphs', function (string $name, ?string $indexName = null): void {
             /** @var Blueprint $this */
-            $this->string("{$name}_type")->nullable();
-            $this->unsignedBigInteger("{$name}_id")->nullable();
-            $this->index(["{$name}_type", "{$name}_id"], $indexName);
+            // Id-type-aware nullable polymorphic columns (mirrors configuredNullableMorphs);
+            // the `{name}_id` matches the configured key type rather than always BIGINT.
+            match (ConfiguredMorphsMacro::idType()) {
+                'UUID' => $this->nullableUuidMorphs($name, $indexName),
+                'ULID' => $this->nullableUlidMorphs($name, $indexName),
+                default => $this->nullableMorphs($name, $indexName),
+            };
+        });
+
+        Blueprint::macro('addAcceptanceFields', function (string $name): void {
+            /** @var Blueprint $this */
+            // Approval-workflow columns: a flag, when it happened, who acted, and a note.
+            $this->boolean("is_{$name}")->default(false);
+            $this->timestamp("{$name}_at")->nullable();
+            match (ConfiguredMorphsMacro::idType()) {
+                'UUID' => $this->foreignUuid("{$name}_by")->nullable(),
+                'ULID' => $this->foreignUlid("{$name}_by")->nullable(),
+                default => $this->foreignId("{$name}_by")->nullable(),
+            };
+            $this->text("{$name}_remarks")->nullable();
         });
     }
 }
