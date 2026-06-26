@@ -21,4 +21,15 @@ parameters:
         -
             identifier: argument.type
             path: src/Backup/SqlFileRestorer.php
+        # The archive scope dispatches builder/model methods supplied by the
+        # HasArchiver trait at runtime (the same pattern as Laravel's own
+        # SoftDeletingScope) — not statically resolvable.
+        -
+            identifier: method.notFound
+            path: src/Schema/Scopes/ArchiveScope.php
+        # addSeoFields() delegates to the sibling addMetaFields() Blueprint macro
+        # registered alongside it; macro methods are invisible to the analyser.
+        -
+            identifier: method.notFound
+            path: src/Schema/FieldGroupMacros.php
     treatPhpDocTypesAsCertain: false
