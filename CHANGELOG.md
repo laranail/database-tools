@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Dependency refresh to latest.** `brick/money` → `^0.13` (and the cast updated
+  for brick/math's `RoundingMode` enum), `spatie/laravel-sluggable` → `^4.0`,
+  dev toolchain `pestphp/pest` → `^4.0` / `phpunit/phpunit` → `^12.5`, and
+  `symfony/uid` widened to `^7.0 || ^8.0` (symfony/uid 8 is used on PHP 8.4+; 7.x
+  is kept for the PHP 8.3 floor). CI Action versions bumped (checkout v7, cache
+  v5, action-gh-release v3). No public API change.
+
 ## [0.2.0] - 2026-06-25
 
 ### Added

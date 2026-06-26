@@ -43,16 +43,16 @@
         "illuminate/support": "^13.0",
         "ramsey/uuid": "^4.7",
         "spatie/laravel-sluggable": "^4.0",
-        "symfony/uid": "^7.0"
+        "symfony/uid": "^7.0 || ^8.0"
     },
     "require-dev": {
-        "mockery/mockery": "^1.6",
-        "orchestra/testbench": "^11.0",
-        "pestphp/pest": "^3.0",
-        "phpunit/phpunit": "^11.0",
-        "phpstan/phpstan": "^2.0",
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.18",
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.0",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^12.5",
         "rector/rector": "^2.0",
         "roave/security-advisories": "dev-latest"
     },
@@ -81,8 +81,8 @@
     },
     "scripts": {
         "setup": "bash .scripts/init.sh",
-        "test": "vendor/bin/pest --colors=always",
-        "test-coverage": "@test --coverage",
+        "test": "vendor/bin/pest --colors=always --no-coverage",
+        "test-coverage": "vendor/bin/pest --colors=always --coverage",
         "test-dirty": "@test --dirty --compact",
         "lint": ["@pint", "@phpstan", "@rector"],
         "pint": "vendor/bin/pint --test",
