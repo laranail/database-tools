@@ -64,5 +64,24 @@ DTO wrapper, use Laravel's native
 [`cursorPaginate()`](https://laravel.com/docs/pagination#cursor-pagination)
 directly.
 
+## Offset pagination (`Pagination`)
+
+When a numbered pager (total/last-page) is required rather than a keyset cursor,
+`Pagination` wraps Laravel's `LengthAwarePaginator` for both in-memory arrays and
+query builders:
+
+```php
+use Simtabi\Laranail\DatabaseTools\Pagination\Pagination;
+
+// Array slice → length-aware paginator (non-positive inputs are clamped to 1):
+$page = Pagination::paginate($items, perPage: 15, currentPage: 2);
+
+// Eloquent/query builder, appending extra query-string params:
+$page = Pagination::paginateQuery(Post::query(), perPage: 25, options: ['sort' => 'new']);
+```
+
+Prefer `CursorPage` for high-throughput / deep pagination; reach for offset
+pagination when you need page numbers and totals.
+
 ---
 [← Docs index](../../README.md#documentation)

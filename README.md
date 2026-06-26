@@ -8,11 +8,13 @@
 > Independent, framework-agnostic database utilities for Laravel.
 
 Model traits (UUID/NanoID/ULID keys, JSON accessors, slugs, immutability,
-threaded records, quiet saving), money & datetime casts, schema macros
-(`auditColumns()`, `softDeletesWithUndo()`, `configuredMorphs()`), an audit
-observer, soft-delete restore history, backup/restore, connection & schema
-inspection, a cursor-pagination DTO, and database/maintenance services —
-designed to be useful in any Laravel app. This package is genuinely
+threaded records, quiet saving, **soft-archiving**), money & datetime casts,
+schema macros (`auditColumns()`, `softDeletesWithUndo()`, `configuredMorphs()`,
+**field-group macros**), an audit observer, soft-delete restore history,
+backup/restore, a **database CLI command** (`laranail::database-tools.db`:
+import / export / restore / clean), connection & schema inspection, **cursor and
+offset pagination**, a **session read-model**, and database/maintenance services
+— designed to be useful in any Laravel app. This package is genuinely
 **independent**: it depends only on `illuminate/*` plus a few small
 utility libraries (`ramsey/uuid`, `symfony/uid`,
 `spatie/laravel-sluggable`, and `brick/money` for the `CastMoney`
@@ -131,15 +133,18 @@ The same pages live under [`docs/`](docs/):
 - [Schema inspection](docs/tools/schema-inspection.md) — `DatabaseSchemaInspector`: tables, columns, counts
 - [Table verification](docs/tools/table-verification.md) — `DatabaseTableVerifier`: verify, detailed report, Laravel tables
 - [Backup & restore](docs/tools/backup-restore.md) — `BackupManager`, per-driver backups, driver-aware restore, dump import
+- [Database CLI](docs/tools/database-cli.md) — `laranail::database-tools.db` command: import / export / restore / clean
 - [Traits](docs/tools/traits.md) — model identifier & behavior traits under `Concerns/`
+- [Soft-archive](docs/tools/archiving.md) — `HasArchiver`: `archived_at` archive/restore (coexists with soft deletes)
 - [Casts](docs/tools/casts.md) — `CastMoney` (brick/money) and `CastDatetime`
-- [Schema macros](docs/tools/macros.md) — `auditColumns()`, `softDeletesWithUndo()`, `configuredMorphs()`, `softDeleteHistory()`, `BlueprintMacros`
+- [Schema macros](docs/tools/macros.md) — `auditColumns()`, `softDeletesWithUndo()`, `configuredMorphs()`, `softDeleteHistory()`, `BlueprintMacros`, field-group macros
 - [Audit observer](docs/tools/observers.md) — `AuditObserver` + `HasAuditObserver`: stamping created/updated/deleted by
 - [Soft-delete restore history](docs/tools/soft-deletes.md) — `HasSoftDeletesWithUndo` trait + history table
 - [Eager-load helpers](docs/tools/eager-loading.md) — `LoadsAggregatesIfMissing`: load-if-missing for counts & aggregates
-- [Cursor pagination](docs/tools/pagination.md) — `CursorPage` DTO over native `cursorPaginate()`
+- [Pagination](docs/tools/pagination.md) — `CursorPage` DTO + offset `Pagination` helper
 - [Events](docs/tools/events.md) — `DatabaseEvents` + `BaseEvent`
 - [BaseModel](docs/tools/base-model.md) — the optional base Eloquent model
+- [Database session](docs/tools/database-session.md) — `DatabaseSession` read model over the `sessions` table
 - [Services](docs/tools/services.md) — `DatabaseService` query/model helpers + `MaintenanceService` filesystem housekeeping
 
 **Examples**

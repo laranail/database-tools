@@ -131,5 +131,40 @@ With the resolver returning `'UUID'`:
 parent BIGINT behavior. A per-driver setup callback that throws is swallowed so
 migrations are not blocked.
 
+## Field-group macros
+
+`FieldGroupMacros` (registered automatically in the provider boot) adds
+convenience `Blueprint` macros for the column patterns that recur across
+migrations:
+
+```php
+Schema::create('posts', function (Blueprint $t) {
+    $t->id();
+    $t->addSlugField();          // unique `slug` (pass true for nullable)
+    $t->addPublishingFields();   // is_published, published_at
+    $t->addMetaFields();         // meta_title, meta_description, meta_keywords
+    $t->addCommonFields();       // timestamps() + softDeletes()
+});
+```
+
+| Macro | Columns |
+|--------|---------|
+| `addCommonFields()` | `timestamps()` + `softDeletes()` |
+| `addUserFields()` | `created_by`, `updated_by`, `deleted_by` (nullable) |
+| `addPublishingFields()` | `is_published`, `published_at` |
+| `addStatusField(string $default = 'active')` | `status` (indexed) |
+| `addSortingField(int $default = 0)` | `sort_order` (indexed) |
+| `addSlugField(bool $nullable = false)` | `slug` (unique) |
+| `addMetaFields()` / `addSeoFields()` | `meta_title`, `meta_description`, `meta_keywords` |
+| `addLocationFields()` | `latitude`, `longitude` (decimal) |
+| `addImageFields(string $prefix = '')` | `{prefix}image`, `_alt`, `_title` |
+| `addPriceFields()` | `price`, `sale_price`, `currency` |
+| `addActivationFields()` | `is_active`, `activated_at`, `deactivated_at` |
+| `addExpiryFields()` | `starts_at`, `expires_at` |
+| `addUuidPrimaryKey(string $column = 'id')` | UUID primary key |
+| `addNullableMorphs(string $name, ?string $indexName = null)` | nullable `{name}_type` / `{name}_id` + index |
+| `dropForeignIfExists(string $index)` | drop a foreign key only if the column exists |
+| `dropColumnIfExists(string\|array $columns)` | drop column(s) only if present |
+
 ---
 [← Docs index](../../README.md#documentation)
