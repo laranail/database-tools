@@ -10,6 +10,7 @@ use Override;
 use Psr\Log\LoggerInterface;
 use Simtabi\Laranail\DatabaseTools\Backup\BackupManager;
 use Simtabi\Laranail\DatabaseTools\Backup\Contracts\BackupManagerInterface;
+use Simtabi\Laranail\DatabaseTools\Console\DatabaseToolsCommand;
 use Simtabi\Laranail\DatabaseTools\DatabaseTools;
 use Simtabi\Laranail\DatabaseTools\Files\Contracts\DatabaseFileServiceInterface;
 use Simtabi\Laranail\DatabaseTools\Files\DatabaseFileService;
@@ -22,6 +23,7 @@ use Simtabi\Laranail\DatabaseTools\Schema\Contracts\DatabaseTableVerifierInterfa
 use Simtabi\Laranail\DatabaseTools\Schema\DatabaseConnectionTester;
 use Simtabi\Laranail\DatabaseTools\Schema\DatabaseSchemaInspector;
 use Simtabi\Laranail\DatabaseTools\Schema\DatabaseTableVerifier;
+use Simtabi\Laranail\DatabaseTools\Schema\FieldGroupMacros;
 use Simtabi\Laranail\DatabaseTools\Schema\SoftDeleteHistoryMacro;
 use Simtabi\Laranail\DatabaseTools\Schema\SoftDeletesWithUndoMacro;
 use Simtabi\Laranail\DatabaseTools\Services\Contracts\DatabaseServiceInterface;
@@ -64,6 +66,10 @@ final class DatabaseToolsServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
+            $this->commands([
+                DatabaseToolsCommand::class,
+            ]);
+
             $this->publishes([
                 __DIR__.'/../../config/database-tools.php' => config_path('database-tools.php'),
             ], 'database-tools-config');
@@ -81,5 +87,6 @@ final class DatabaseToolsServiceProvider extends ServiceProvider
         SoftDeletesWithUndoMacro::register();
         ConfiguredMorphsMacro::register();
         SoftDeleteHistoryMacro::register();
+        FieldGroupMacros::register();
     }
 }
